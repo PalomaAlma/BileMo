@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Product;
 use App\Repository\ProductRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class ProductController extends AbstractController
 {
@@ -18,6 +20,20 @@ class ProductController extends AbstractController
 
         return $this->json([
             'products' => $productList,
+            'message' => 'Welcome to your new controller!',
+            'path' => 'src/Controller/ProductController.php',
+        ]);
+    }
+
+    /**
+     * @Route("/api/products/{id}", name="detailProduct", methods={"GET"})
+     */
+    public function getDetailProduct(Product $product): JsonResponse
+    {
+        $product = $product;
+
+        return $this->json([
+            'product' => $product,
             'message' => 'Welcome to your new controller!',
             'path' => 'src/Controller/ProductController.php',
         ]);
