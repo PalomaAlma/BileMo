@@ -30,8 +30,6 @@ class ProductController extends AbstractController
      */
     public function getDetailProduct(Product $product): JsonResponse
     {
-        $product = $product;
-
         return $this->json([
             'product' => $product,
             'message' => 'Welcome to your new controller!',
