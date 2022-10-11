@@ -16,12 +16,10 @@ class ProductController extends AbstractController
      */
     public function getProductList(ProductRepository $productRepository): JsonResponse
     {
-        $productList = $productRepository->findAll();
+
 
         return $this->json([
-            'products' => $productList,
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/ProductController.php',
+            'products' => $productRepository->findAll(),
         ]);
     }
 
@@ -32,8 +30,6 @@ class ProductController extends AbstractController
     {
         return $this->json([
             'product' => $product,
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/ProductController.php',
         ]);
     }
 }
