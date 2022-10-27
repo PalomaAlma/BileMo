@@ -42,9 +42,14 @@ class UserController extends AbstractController
     /**
      * @Route("/api/users/new", name="user_new", methods={"GET", "POST"})
      */
-    public function new(Request $request, UserRepository $userRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator): JsonResponse
+    public function new(Request $request, UserRepository $userRepository, ClientRepository $clientRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
         $user = $serializer->deserialize($request->getContent(), User::class, 'json');
+
+        $content = $request->toArray();
+        $client = $content['client'] ?? -1;
+        $user->setClient($clientRepository->findOneById($client));
+
         $userRepository->add($user, true);
 
         $jsonUser = $serializer->serialize($user, 'json');
@@ -63,10 +68,11 @@ class UserController extends AbstractController
             User::class,
             'json',
             [AbstractNormalizer::OBJECT_TO_POPULATE => $userRepository->findOneById($id)]);
+
         $content = $request->toArray();
         $client = $content['client'] ?? -1;
-//        dd($client);
         $updatedUser->setClient($clientRepository->findOneById($client));
+
         $userRepository->add($updatedUser, true);
 
         $jsonUser = $serializer->serialize($updatedUser, 'json', ['groups' => 'getUsers']);
