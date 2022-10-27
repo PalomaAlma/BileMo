@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Product;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -15,6 +16,7 @@ class AppFixtures extends Fixture
     {
         $this->userPasswordHasher = $userPasswordHasher;
     }
+
     public function load(ObjectManager $manager): void
     {
         // Création d'un user "normal"
@@ -30,8 +32,14 @@ class AppFixtures extends Fixture
         $userAdmin->setRoles(["ROLE_ADMIN"]);
         $userAdmin->setPassword($this->userPasswordHasher->hashPassword($userAdmin, "password"));
         $manager->persist($userAdmin);
-        // $product = new Product();
-        // $manager->persist($product);
+
+        for ($i = 0; $i < 20; $i++) {
+            $product = new Product();
+            $product->setName("product" . $i);
+            $product->setDescription("description of " . $product->getName());
+            $product->setPrice(mt_rand(1, 200));
+             $manager->persist($product);
+        }
 
         $manager->flush();
     }
