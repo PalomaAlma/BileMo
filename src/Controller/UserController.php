@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -54,18 +55,21 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/api/users/{id}/edit", name="user_edit", methods={"GET", "POST"})
+     * @Route("/api/users/{id}/edit", name="user_edit", methods={"PUT"})
      */
-    public function edit(Request $request, UserRepository $userRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator, $id): JsonResponse
+    public function edit(Request $request, UserRepository $userRepository, ClientRepository $clientRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator, $id): JsonResponse
     {
         $updatedUser = $serializer->deserialize($request->getContent(),
             User::class,
             'json',
             [AbstractNormalizer::OBJECT_TO_POPULATE => $userRepository->findOneById($id)]);
-
+        $content = $request->toArray();
+        $client = $content['client'] ?? -1;
+//        dd($client);
+        $updatedUser->setClient($clientRepository->findOneById($client));
         $userRepository->add($updatedUser, true);
 
-        $jsonUser = $serializer->serialize($updatedUser, 'json');
+        $jsonUser = $serializer->serialize($updatedUser, 'json', ['groups' => 'getUsers']);
 
         $location = $urlGenerator->generate('detailUser', ['id' => $updatedUser->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
