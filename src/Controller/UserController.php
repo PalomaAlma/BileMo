@@ -32,9 +32,11 @@ class UserController extends AbstractController
     /**
      * @Route("/api/users/client-{id}", name="usersByClient")
      */
-    public function usersByClient(UserRepository $userRepository, ClientRepository $clientRepository, SerializerInterface $serializer, $id): JsonResponse
+    public function usersByClient(Request $request, UserRepository $userRepository, ClientRepository $clientRepository, SerializerInterface $serializer, $id): JsonResponse
     {
-        $usersClient = $userRepository->findByClient($id);
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 3);
+        $usersClient = $userRepository->findAllWithPagination($page, $limit, $id);
 
         $jsonUser = $serializer->serialize($usersClient, 'json', ['groups' => 'getUsers']);
 
