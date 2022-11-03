@@ -17,7 +17,6 @@ class ProductController extends AbstractController
     public function getProductList(ProductRepository $productRepository): JsonResponse
     {
 
-
         return $this->json([
             'products' => $productRepository->findAll(),
         ]);

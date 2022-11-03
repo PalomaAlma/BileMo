@@ -17,10 +17,22 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class UserController extends AbstractController
 {
+
     /**
-     * @Route("/api/users/client-{id}", name="user")
+     * @Route("/api/users", name="users")
      */
-    public function index(UserRepository $userRepository, ClientRepository $clientRepository, SerializerInterface $serializer, $id): JsonResponse
+    public function index(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
+    {
+
+        $jsonUser = $serializer->serialize($userRepository->findAll(), 'json', ['groups' => 'getUsers']);
+
+        return new JsonResponse($jsonUser, Response::HTTP_CREATED, [], true);
+    }
+
+    /**
+     * @Route("/api/users/client-{id}", name="usersByClient")
+     */
+    public function usersByClient(UserRepository $userRepository, ClientRepository $clientRepository, SerializerInterface $serializer, $id): JsonResponse
     {
         $usersClient = $userRepository->findByClient($id);
 
@@ -29,15 +41,15 @@ class UserController extends AbstractController
         return new JsonResponse($jsonUser, Response::HTTP_CREATED, [], true);
     }
 
-
     /**
      * @Route("/api/users/{id}", name="detailUser", methods={"GET"})
      */
-    public function getDetailUser(UserRepository $userRepository, $id): JsonResponse
+    public function getDetailUser(UserRepository $userRepository, SerializerInterface $serializer, $id): JsonResponse
     {
-        return $this->json([
-            'user' => $userRepository->findOneById($id)
-        ]);
+        $user = $userRepository->findOneById($id);
+        $jsonUser = $serializer->serialize($user, 'json', ['groups' => 'getUsers']);
+
+        return new JsonResponse($jsonUser, Response::HTTP_CREATED, [], true);
     }
 
 
