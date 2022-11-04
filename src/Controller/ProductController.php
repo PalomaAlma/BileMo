@@ -27,7 +27,7 @@ class ProductController extends AbstractController
 
         $productList = $cachePool->get($idCache, function (ItemInterface $item) use ($productRepository, $page, $limit) {
 
-            $item->tag("usersCache");
+            $item->tag("productsCache");
 
             return $productRepository->findAllWithPagination($page, $limit);
 
