@@ -6,6 +6,8 @@ use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,6 +28,33 @@ class UserController extends AbstractController
 {
 
     /**
+     * Méthode permettant de récupérer l'ensemble des utilisateurs
+     *
+     * @OA\Response(
+     *     response=200,
+     *     description="Retourne la liste des utilisateurs",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"getUsers"}))
+     *     )
+     * )
+     *
+     * @OA\Parameter(
+     *     name="limit",
+     *     in="query",
+     *     description="Le nombre d'éléments que l'on veut récupérer",
+     *     @OA\Schema(type="int")
+     * )
+     *
+     * @OA\Parameter(
+     *     name="page",
+     *     in="query",
+     *     description="La page que l'on veut récupérer",
+     *     @OA\Schema(type="int")
+     * )
+     *
+     * @OA\Tag(name="Utilisateurs")
+     *
      * @Route("/api/users", name="users")
      */
     public function index(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
@@ -38,6 +67,40 @@ class UserController extends AbstractController
     }
 
     /**
+     * Méthode permettant de récupérer la liste des utilisateurs par client référencé
+     *
+     * @OA\Response(
+     *     response=200,
+     *     description="Retourne la liste des utilisateurs par client",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"getUsers"}))
+     *     )
+     * )
+     *
+     * @OA\Parameter(
+     *     name="limit",
+     *     in="query",
+     *     description="Le nombre d'éléments que l'on veut récupérer",
+     *     @OA\Schema(type="int")
+     * )
+     *
+     * @OA\Parameter(
+     *     name="page",
+     *     in="query",
+     *     description="La page que l'on veut récupérer",
+     *     @OA\Schema(type="int")
+     * )
+     *
+     * @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     description="L'id du client pour lequel sont référencés les utilisateurs",
+     *     @OA\Schema(type="string")
+     * )
+     *
+     * @OA\Tag(name="Utilisateurs")
+     *
      * @Route("/api/users/client-{id}", name="usersByClient")
      * @throws InvalidArgumentException
      */
@@ -62,6 +125,26 @@ class UserController extends AbstractController
     }
 
     /**
+     * Méthode permettant de récupérer les détails d'un utilisateur
+     *
+     * @OA\Response(
+     *     response=200,
+     *     description="Retourne les détails d'un utilisateur",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"getUsers"}))
+     *     )
+     * )
+     *
+     * @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     description="L'id de l'utilisateur que l'on veut récupérer",
+     *     @OA\Schema(type="string")
+     * )
+     *
+     * @OA\Tag(name="Utilisateurs")
+     *
      * @Route("/api/users/{id}", name="detailUser", methods={"GET"})
      */
     public function getDetailUser(UserRepository $userRepository, SerializerInterface $serializer, $id): JsonResponse
@@ -74,7 +157,20 @@ class UserController extends AbstractController
 
 
     /**
-     * @Route("/api/users/new", name="user_new", methods={"GET", "POST"})
+     * Méthode permettant de créer un nouvel utilisateur
+     *
+     * @OA\Response(
+     *     response=201,
+     *     description="Crée un utilisateur",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"getUsers"}))
+     *     )
+     * )
+     *
+     * @OA\Tag(name="Utilisateurs")
+     *
+     * @Route("/api/users", name="user_new", methods={"GET", "POST"})
      */
     public function new(Request $request,UserPasswordHasherInterface $userPasswordHasher, UserRepository $userRepository, ClientRepository $clientRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator, ValidatorInterface $validator, TagAwareCacheInterface $cachePool): JsonResponse
     {
@@ -105,6 +201,26 @@ class UserController extends AbstractController
     }
 
     /**
+     * Méthode permettant de modifier un utilisateur
+     *
+     * @OA\Response(
+     *     response=204,
+     *     description="Modifie un utilisateur",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"getUsers"}))
+     *     )
+     * )
+     *
+     * @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     description="L'id de l'utilisateur que l'on veut modifier",
+     *     @OA\Schema(type="string")
+     * )
+     *
+     * @OA\Tag(name="Utilisateurs")
+     *
      * @Route("/api/users/{id}", name="user_edit", methods={"PUT"})
      */
     public function edit(Request $request, UserRepository $userRepository, User $currentUser, ClientRepository $clientRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator, $id, TagAwareCacheInterface $cachePool, UserPasswordHasherInterface $userPasswordHasher, ValidatorInterface $validator): JsonResponse
@@ -131,6 +247,26 @@ class UserController extends AbstractController
     }
 
     /**
+     * Méthode permettant de récupérer les détails d'un utilisateur
+     *
+     * @OA\Response(
+     *     response=204,
+     *     description="Supprime un utilisateur",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"getUsers"}))
+     *     )
+     * )
+     *
+     * @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     description="L'id de l'utilisateur que l'on veut supprimer",
+     *     @OA\Schema(type="string")
+     * )
+     *
+     * @OA\Tag(name="Utilisateurs")
+     *
      * @Route("/api/users/{id}", name="user_delete", methods={"DELETE"})
      */
     public function delete(Request $request, UserRepository $userRepository, $id, TagAwareCacheInterface $cachePool): JsonResponse
