@@ -17,6 +17,7 @@ class Client
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"getUsers"})
      */
     private $id;
 
@@ -34,7 +35,6 @@ class Client
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"getUsers"})
      */
     private $isActive;
 
