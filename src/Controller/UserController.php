@@ -55,7 +55,7 @@ class UserController extends AbstractController
      *
      * @OA\Tag(name="Utilisateurs")
      *
-     * @Route("/api/users", name="users")
+     * @Route("/api/users", name="users", methods={"GET"})
      */
     public function index(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
@@ -101,10 +101,17 @@ class UserController extends AbstractController
      *
      * @OA\Tag(name="Utilisateurs")
      *
-     * @Route("/api/users/client-{id}", name="usersByClient")
+     * @Route("/api/users/client-{id}", name="usersByClient", methods={"GET"})
      * @throws InvalidArgumentException
      */
-    public function usersByClient(TagAwareCacheInterface $cachePool, Request $request, UserRepository $userRepository, ClientRepository $clientRepository, SerializerInterface $serializer, $id): JsonResponse
+    public function usersByClient(
+            TagAwareCacheInterface $cachePool,
+            Request $request,
+            UserRepository $userRepository,
+            ClientRepository $clientRepository,
+            SerializerInterface $serializer,
+            $id
+    ): JsonResponse
     {
         $page = $request->get('page', 1);
         $limit = $request->get('limit', 5);
