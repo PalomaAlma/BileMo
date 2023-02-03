@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\UserType;
 use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -156,6 +155,9 @@ class UserController extends AbstractController
      */
     public function getDetailUser(UserRepository $userRepository, SerializerInterface $serializer, $id): JsonResponse
     {
+        if (!is_int($id)) {
+            return new JsonResponse("Wrong id, you must enter a number", Response::HTTP_BAD_REQUEST);
+        }
         $context = SerializationContext::create()->setGroups(['getUsers']);
         $jsonUser = $serializer->serialize($userRepository->findOneById($id), 'json', $context);
 
@@ -232,6 +234,10 @@ class UserController extends AbstractController
      */
     public function edit(Request $request, UserRepository $userRepository, User $currentUser, ClientRepository $clientRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator, $id, TagAwareCacheInterface $cachePool, UserPasswordHasherInterface $userPasswordHasher, ValidatorInterface $validator): JsonResponse
     {
+        if (!is_int($id)) {
+            return new JsonResponse("Wrong id, you must enter a number", Response::HTTP_BAD_REQUEST);
+        }
+
         $updatedUser = $serializer->deserialize($request->getContent(), User::class, 'json');
         $currentUser->setEmail($updatedUser->getEmail());
         $currentUser->setPassword($userPasswordHasher->hashPassword($currentUser, $updatedUser->getPassword()));
@@ -278,6 +284,11 @@ class UserController extends AbstractController
      */
     public function delete(Request $request, UserRepository $userRepository, $id, TagAwareCacheInterface $cachePool): JsonResponse
     {
+
+        if (!is_int($id)) {
+            return new JsonResponse("Wrong id, you must enter a number", Response::HTTP_BAD_REQUEST);
+        }
+
         $cachePool->invalidateTags(["usersCache"]);
 
         $userRepository->remove($userRepository->findOneById($id), true);
